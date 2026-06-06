@@ -1,13 +1,561 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>Projects</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Abilab projects and experiments.">
+    <title>Abilab Projects</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --ink: #fff8fb;
+        --muted: #dccbd7;
+        --quiet: #a997ad;
+        --paper: #17131c;
+        --panel: rgba(31, 25, 39, 0.8);
+        --line: rgba(255, 248, 251, 0.18);
+        --blue: #78d8f7;
+        --pink: #f6a8bd;
+        --cream: #fff7f4;
+        --shadow: rgba(0, 0, 0, 0.34);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        line-height: 1.5;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .scene {
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+        overflow: hidden;
+        background:
+          repeating-linear-gradient(0deg, rgba(255, 248, 251, 0.018) 0 1px, transparent 1px 3rem),
+          repeating-linear-gradient(90deg, rgba(255, 248, 251, 0.014) 0 1px, transparent 1px 3rem),
+          linear-gradient(138deg, rgba(246, 168, 189, 0.08) 0 18%, transparent 18% 100%),
+          linear-gradient(44deg, transparent 0 55%, rgba(120, 216, 247, 0.1) 55% 72%, transparent 72%),
+          linear-gradient(135deg, #17131c 0%, #20182a 48%, #11262b 100%);
+      }
+
+      .scene::before {
+        position: absolute;
+        right: -12rem;
+        bottom: -18rem;
+        width: min(62rem, 82vw);
+        aspect-ratio: 1;
+        border: 1px solid rgba(255, 248, 251, 0.08);
+        border-radius: 50%;
+        background:
+          radial-gradient(circle, rgba(120, 216, 247, 0.1), transparent 56%),
+          conic-gradient(from 210deg, rgba(246, 168, 189, 0.12), rgba(120, 216, 247, 0.1), transparent 42%);
+        content: "";
+        opacity: 0.9;
+      }
+
+      .circuit-garden {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0.92;
+      }
+
+      .circuit-garden .stem,
+      .circuit-garden .branch {
+        fill: none;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .circuit-garden .branch {
+        stroke-dasharray: 1 14;
+      }
+
+      .circuit-garden .leaf,
+      .circuit-garden .petal {
+        transform-box: fill-box;
+        transform-origin: center;
+      }
+
+      .grain {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background-image:
+          linear-gradient(rgba(255, 248, 251, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 248, 251, 0.032) 1px, transparent 1px);
+        background-size: 44px 44px;
+        mask-image: linear-gradient(to bottom, #000 0%, rgba(0, 0, 0, 0.65) 70%, transparent 100%);
+      }
+
+      .site-header {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1.1rem clamp(1rem, 4vw, 3rem);
+        background: linear-gradient(to bottom, rgba(17, 16, 15, 0.84), transparent);
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 2.15rem;
+        height: 2.15rem;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 8px;
+        background:
+          linear-gradient(135deg, rgba(120, 216, 247, 0.24), rgba(246, 168, 189, 0.22)),
+          rgba(255, 255, 255, 0.08);
+        box-shadow: 0 1rem 2rem var(--shadow);
+        color: var(--cream);
+        font-weight: 900;
+      }
+
+      nav {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      nav a {
+        min-height: 2.4rem;
+        padding: 0.62rem 0.85rem;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        color: var(--muted);
+        font-size: 0.93rem;
+        font-weight: 700;
+      }
+
+      nav a:hover,
+      nav a:focus-visible {
+        border-color: var(--line);
+        background: rgba(255, 255, 255, 0.07);
+        color: var(--ink);
+        outline: none;
+      }
+
+      main {
+        min-height: 100vh;
+      }
+
+      .hero {
+        position: relative;
+        display: grid;
+        min-height: 92vh;
+        align-items: end;
+        padding: 7.5rem clamp(1rem, 5vw, 5rem) 4rem;
+      }
+
+      .hero-inner {
+        position: relative;
+        z-index: 1;
+        width: min(64rem, 100%);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin: 0 0 1.15rem;
+        color: var(--blue);
+        font-size: 0.88rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .eyebrow::before {
+        width: 2.4rem;
+        height: 2px;
+        background: linear-gradient(90deg, var(--blue), var(--pink));
+        content: "";
+      }
+
+      h1 {
+        max-width: 13ch;
+        margin: 0;
+        font-size: clamp(3.2rem, 8vw, 7.5rem);
+        line-height: 0.92;
+        letter-spacing: 0;
+        text-shadow:
+          0.035em 0.035em 0 rgba(120, 216, 247, 0.28),
+          -0.025em 0.055em 0 rgba(246, 168, 189, 0.22);
+      }
+
+      .lede {
+        max-width: 43rem;
+        margin: 1.35rem 0 0;
+        color: var(--muted);
+        font-size: clamp(1.07rem, 2vw, 1.35rem);
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 2rem;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 3rem;
+        padding: 0.78rem 1rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--ink);
+        font-weight: 800;
+        box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.18);
+        transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+      }
+
+      .button.primary {
+        border-color: rgba(246, 168, 189, 0.72);
+        background: linear-gradient(135deg, var(--pink), var(--cream));
+        color: #281820;
+      }
+
+      .button:hover,
+      .button:focus-visible {
+        transform: translateY(-1px);
+        outline: none;
+      }
+
+      .content-band {
+        background:
+          linear-gradient(90deg, rgba(120, 216, 247, 0.05), transparent 28%, rgba(246, 168, 189, 0.05)),
+          rgba(18, 15, 24, 0.9);
+        border-top: 1px solid var(--line);
+        backdrop-filter: blur(18px);
+      }
+
+      .section {
+        width: min(72rem, 100%);
+        margin: 0 auto;
+        padding: clamp(2.8rem, 7vw, 5.5rem) clamp(1rem, 4vw, 2rem);
+      }
+
+      .section-heading {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.4rem;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      .section-heading p {
+        max-width: 25rem;
+        margin: 0;
+        color: var(--quiet);
+      }
+
+      .projects {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+        gap: 1rem;
+      }
+
+      .project-card {
+        min-height: 15rem;
+        padding: 1.25rem;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background:
+          linear-gradient(135deg, rgba(120, 216, 247, 0.1), transparent 34%),
+          linear-gradient(315deg, rgba(246, 168, 189, 0.12), transparent 38%),
+          var(--panel);
+        box-shadow: 0 1.5rem 3.5rem rgba(0, 0, 0, 0.24);
+        transition: transform 180ms ease, border-color 180ms ease;
+      }
+
+      .project-card:hover,
+      .project-card:focus-visible {
+        border-color: rgba(120, 216, 247, 0.58);
+        outline: none;
+        transform: translateY(-2px);
+      }
+
+      .project-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        min-height: 2.4rem;
+        margin-bottom: 2.6rem;
+      }
+
+      .status {
+        padding: 0.35rem 0.55rem;
+        border: 1px solid rgba(246, 168, 189, 0.36);
+        border-radius: 999px;
+        color: var(--pink);
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .arrow {
+        display: grid;
+        width: 2.3rem;
+        height: 2.3rem;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        color: var(--blue);
+        font-size: 1.1rem;
+      }
+
+      .project-card h3 {
+        margin: 0 0 0.7rem;
+        font-size: 1.55rem;
+        line-height: 1.1;
+        letter-spacing: 0;
+      }
+
+      .project-card p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        width: min(72rem, 100%);
+        margin: 0 auto;
+        padding: 1.4rem clamp(1rem, 4vw, 2rem) 2rem;
+        color: var(--quiet);
+        font-size: 0.92rem;
+      }
+
+      @media (max-width: 680px) {
+        .site-header {
+          position: absolute;
+          padding-top: 0.85rem;
+        }
+
+        nav a {
+          padding-inline: 0.55rem;
+        }
+
+        .hero {
+          min-height: 88vh;
+          padding-top: 6.2rem;
+          padding-bottom: 3rem;
+        }
+
+        .section-heading,
+        .footer {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        .button,
+        .project-card {
+          transition: none;
+        }
+      }
+    </style>
   </head>
   <body>
-    <h1>Projects</h1>
-    <ul>
-      <li><a href="/VocalMirror/">VocalMirror</a></li>
-    </ul>
+    <div class="scene" aria-hidden="true">
+      <svg class="circuit-garden" viewBox="0 0 1440 960" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="4" result="blur"></feGaussianBlur>
+            <feMerge>
+              <feMergeNode in="blur"></feMergeNode>
+              <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <g opacity="0.18" fill="#fff8fb">
+          <path d="M842 960 C934 890 1034 884 1128 917 C1210 947 1308 936 1440 858 V960Z"></path>
+        </g>
+
+        <g filter="url(#softGlow)" opacity="0.88">
+          <path class="stem" d="M978 960 C976 842 1008 751 1070 670 C1136 583 1145 500 1116 414" stroke="#78d8f7" stroke-width="9"></path>
+          <path class="stem" d="M1115 960 C1092 820 1136 721 1224 622 C1300 535 1323 449 1298 344" stroke="#f6a8bd" stroke-width="8"></path>
+          <path class="stem" d="M1248 960 C1212 828 1230 718 1294 614 C1340 540 1360 452 1348 345" stroke="#fff7f4" stroke-width="6" opacity="0.5"></path>
+          <path class="stem" d="M1360 960 C1348 845 1372 748 1423 660" stroke="#78d8f7" stroke-width="5" opacity="0.35"></path>
+
+          <path class="branch" d="M1067 673 C995 631 946 570 921 494" stroke="#fff7f4" stroke-width="4.5" opacity="0.42"></path>
+          <path class="branch" d="M1108 552 C1040 515 1016 455 1027 375" stroke="#78d8f7" stroke-width="4.5" opacity="0.42"></path>
+          <path class="branch" d="M1174 704 C1108 692 1050 714 1005 771" stroke="#f6a8bd" stroke-width="4" opacity="0.36"></path>
+          <path class="branch" d="M1224 622 C1306 609 1363 558 1394 470" stroke="#78d8f7" stroke-width="4.5" opacity="0.4"></path>
+          <path class="branch" d="M1298 344 C1236 316 1210 264 1218 197" stroke="#f6a8bd" stroke-width="4" opacity="0.4"></path>
+          <path class="branch" d="M1294 614 C1225 565 1198 499 1218 421" stroke="#fff7f4" stroke-width="4" opacity="0.33"></path>
+        </g>
+
+        <g opacity="0.86">
+          <ellipse class="leaf" cx="938" cy="520" rx="72" ry="24" fill="#fff7f4" opacity="0.22" transform="rotate(32 938 520)"></ellipse>
+          <ellipse class="leaf" cx="1026" cy="376" rx="62" ry="22" fill="#78d8f7" opacity="0.34" transform="rotate(-45 1026 376)"></ellipse>
+          <ellipse class="leaf" cx="1008" cy="771" rx="58" ry="22" fill="#f6a8bd" opacity="0.28" transform="rotate(-26 1008 771)"></ellipse>
+          <ellipse class="leaf" cx="1393" cy="470" rx="70" ry="24" fill="#78d8f7" opacity="0.3" transform="rotate(-32 1393 470)"></ellipse>
+          <ellipse class="leaf" cx="1218" cy="421" rx="58" ry="21" fill="#fff7f4" opacity="0.2" transform="rotate(-50 1218 421)"></ellipse>
+          <ellipse class="leaf" cx="1219" cy="198" rx="54" ry="20" fill="#f6a8bd" opacity="0.34" transform="rotate(48 1219 198)"></ellipse>
+          <ellipse class="leaf" cx="1423" cy="660" rx="52" ry="18" fill="#78d8f7" opacity="0.22" transform="rotate(-38 1423 660)"></ellipse>
+          <path d="M938 520 C960 518 978 509 995 494" stroke="#17131c" stroke-width="3" opacity="0.28" fill="none"></path>
+          <path d="M1026 376 C1041 398 1058 412 1074 421" stroke="#17131c" stroke-width="3" opacity="0.28" fill="none"></path>
+          <path d="M1393 470 C1368 486 1346 496 1322 500" stroke="#17131c" stroke-width="3" opacity="0.24" fill="none"></path>
+        </g>
+
+        <g opacity="0.88">
+          <g transform="translate(1116 414)">
+            <ellipse class="petal" cx="0" cy="-34" rx="15" ry="34" fill="#f6a8bd" opacity="0.38"></ellipse>
+            <ellipse class="petal" cx="32" cy="-8" rx="15" ry="32" fill="#78d8f7" opacity="0.34" transform="rotate(72)"></ellipse>
+            <ellipse class="petal" cx="20" cy="28" rx="14" ry="30" fill="#fff7f4" opacity="0.24" transform="rotate(145)"></ellipse>
+            <ellipse class="petal" cx="-22" cy="24" rx="14" ry="30" fill="#78d8f7" opacity="0.3" transform="rotate(218)"></ellipse>
+            <ellipse class="petal" cx="-34" cy="-10" rx="15" ry="32" fill="#f6a8bd" opacity="0.32" transform="rotate(288)"></ellipse>
+            <rect x="-11" y="-11" width="22" height="22" rx="6" fill="#fff7f4" opacity="0.68"></rect>
+            <path d="M-5 0h10M0-5v10" stroke="#17131c" stroke-width="2.5" stroke-linecap="round" opacity="0.45"></path>
+          </g>
+
+          <g transform="translate(1298 344)">
+            <ellipse class="petal" cx="0" cy="-30" rx="13" ry="30" fill="#78d8f7" opacity="0.34"></ellipse>
+            <ellipse class="petal" cx="28" cy="-4" rx="13" ry="28" fill="#f6a8bd" opacity="0.32" transform="rotate(75)"></ellipse>
+            <ellipse class="petal" cx="0" cy="30" rx="13" ry="30" fill="#78d8f7" opacity="0.28"></ellipse>
+            <ellipse class="petal" cx="-28" cy="-4" rx="13" ry="28" fill="#fff7f4" opacity="0.2" transform="rotate(-75)"></ellipse>
+            <circle r="12" fill="#fff7f4" opacity="0.64"></circle>
+            <circle r="4" fill="#17131c" opacity="0.36"></circle>
+          </g>
+
+          <g transform="translate(1294 614)">
+            <ellipse class="petal" cx="0" cy="-26" rx="12" ry="26" fill="#f6a8bd" opacity="0.3"></ellipse>
+            <ellipse class="petal" cx="24" cy="0" rx="12" ry="26" fill="#78d8f7" opacity="0.24" transform="rotate(90)"></ellipse>
+            <ellipse class="petal" cx="0" cy="26" rx="12" ry="26" fill="#fff7f4" opacity="0.18"></ellipse>
+            <ellipse class="petal" cx="-24" cy="0" rx="12" ry="26" fill="#78d8f7" opacity="0.24" transform="rotate(90)"></ellipse>
+            <rect x="-8" y="-8" width="16" height="16" rx="4" fill="#fff7f4" opacity="0.6"></rect>
+          </g>
+        </g>
+
+        <g fill="#fff8fb" opacity="0.3">
+          <circle cx="978" cy="850" r="4"></circle>
+          <circle cx="1004" cy="790" r="3"></circle>
+          <circle cx="1032" cy="728" r="3"></circle>
+          <circle cx="1118" cy="832" r="4"></circle>
+          <circle cx="1155" cy="742" r="3"></circle>
+          <circle cx="1223" cy="622" r="4"></circle>
+          <circle cx="1250" cy="795" r="3"></circle>
+          <circle cx="1282" cy="710" r="3"></circle>
+          <circle cx="1348" cy="510" r="3"></circle>
+        </g>
+
+        <g opacity="0.18" stroke="#fff8fb" stroke-width="1.5" fill="none">
+          <path d="M930 812h62v44h-62z" stroke-dasharray="7 9"></path>
+          <path d="M1198 247h58v42h-58z"></path>
+          <path d="M1352 704h48v48h-48z" stroke-dasharray="7 9"></path>
+        </g>
+      </svg>
+    </div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Abilab home">
+        <span class="brand-mark">A</span>
+        <span>Abilab</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#projects">Projects</a>
+        <a href="https://github.com/xxredxpandaxx">GitHub</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero" aria-labelledby="home-title">
+        <div class="hero-inner">
+          <p class="eyebrow">Projects. experiments. useful little things.</p>
+          <h1 id="home-title">Abilab Projects</h1>
+          <p class="lede">
+            A home for the tools, prototypes, and ideas I am building in public.
+            Small experiments, practical interfaces, and the occasional
+            surprisingly handy thing.
+          </p>
+          <div class="actions">
+            <a class="button primary" href="#projects">View projects</a>
+            <a class="button" href="https://github.com/xxredxpandaxx">Visit GitHub</a>
+          </div>
+        </div>
+      </section>
+
+      <div class="content-band">
+        <section class="section" id="projects" aria-labelledby="projects-title">
+          <div class="section-heading">
+            <h2 id="projects-title">Featured Work</h2>
+            <p>Live project pages and experiments hosted here on GitHub Pages.</p>
+          </div>
+
+          <div class="projects">
+            <a class="project-card" href="/VocalMirror/">
+              <div class="project-top">
+                <span class="status">Live</span>
+                <span class="arrow" aria-hidden="true">-&gt;</span>
+              </div>
+              <h3>VocalMirror</h3>
+              <p>
+                A focused project page for exploring vocal practice, feedback,
+                and reflection.
+              </p>
+            </a>
+          </div>
+        </section>
+
+        <footer class="footer">
+          <span>projects.abilab.io</span>
+          <span>Built on GitHub Pages</span>
+        </footer>
+      </div>
+    </main>
+
   </body>
 </html>
